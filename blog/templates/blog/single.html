@@ -3,56 +3,75 @@
 {% load comment_extras %}
 {% block title %}{{ post.title }}{% endblock %}
 {% block content %}
-{% if request.session.is_login %}
-<article class="post post-{{ post.pk }}">
-    <header class="entry-header">
-        <h1 class="entry-title">{{ post.title }}</h1>
-        <div class="entry-meta">
-            <span class="post-category"><a href="#">{{ post.category.name }}</a></span>
-            <span class="post-date"><a><time class="entry-date"
-                        datetime="{{ post.created_time }}">{{ post.created_time }}</time></a></span>
-            <span class="post-author"><a href="#">{{ post.author }}</a></span>
-            <span class="comments-link"><a href="#comment-area">{{ post.comment_set.count }} 评论</a></span>
-            <span class="views-count"><a>{{ post.views }} 阅读</a></span>
-        </div>
-    </header>
-    <div class="entry-content clearfix">
-        {{ post.body|safe }}
-    </div>
-</article>
-<section class="comment-area" id="comment-area">
-    <h3>发表评论</h3>
-    {% show_comment_form post %}
-    {% block message %}
-    {% endblock %}
-    <div class="comment-list-panel">
-        {% show_comments post %}
-    </div>
-</section>
-{% else %}
-<article class="post post-{{ post.pk }}">
-    <header class="entry-header">
-        <h1 class="entry-title">{{ post.title }}</h1>
-        <div class="entry-meta">
-            <span class="post-category"><a href="#">{{ post.category.name }}</a></span>
-            <span class="post-date"><a><time class="entry-date"
-                        datetime="{{ post.created_time }}">{{ post.created_time }}</time></a></span>
-            <span class="post-author"><a href="#">{{ post.author }}</a></span>
-            <span class="comments-link"><a href="#comment-area">{{ post.comment_set.count }} 评论</a></span>
-            <span class="views-count"><a>{{ post.views }} 阅读</a></span>
-        </div>
-    </header>
-    <div class="entry-content clearfix">
-        {{ post.body|safe }}
-    </div>
-</article>
+    {% if request.session.is_login %}
+        <article class="post post-{{ post.pk }}">
+            <header class="entry-header">
+                <h1 class="entry-title">{{ post.title }}</h1>
+                <div class="entry-meta">
+                    <span class="post-category"><a href="#">{{ post.category.name }}</a></span>
+                    <span class="post-date"><a><time class="entry-date" datetime="{{ post.created_time }}">{{ post.created_time }}</time></a></span>
+                    <span class="post-author"><a href="#">{{ post.author }}</a></span>
+                    <span class="comments-link"><a href="#comment-area">{{ post.comment_set.count }} 评论</a></span>
+                    <span class="views-count"><a>{{ post.views }} 阅读</a></span>
+                    {% if delete_allowance == 'allowed' %}
+                        <span class="button"><a href="#" onclick="confirm_safe_delete()">删除文章</a>
+                        <form style="display:none;" id="safe_delete" action="{% url 'blog:delete' post.id %}" method="POST">
+                            {% csrf_token %}
+                            <button type="submit">发送</button>
+                        </form>
+                        </span>
+                        <span class="button"><a href="{% url 'blog:edit' post.id %}">编辑文章</a></span>
+                    {% endif %}
+                </div>
+            </header>
+            <div class="entry-content clearfix">
+                {{ post.body|safe }}
+            </div>
+        </article>
+        <section class="comment-area" id="comment-area">
+            <h3>发表评论</h3>
+            {% show_comment_form post %}
+            {% block message %}
+            {% endblock %}
+            <div class="comment-list-panel">
+                {% show_comments post %}
+            </div>
+        </section>
+    {% else %}
+        <article class="post post-{{ post.pk }}">
+            <header class="entry-header">
+                <h1 class="entry-title">{{ post.title }}</h1>
+                <div class="entry-meta">
+                    <span class="post-category"><a href="#">{{ post.category.name }}</a></span>
+                    <span class="post-date"><a><time class="entry-date" datetime="{{ post.created_time }}">{{ post.created_time }}</time></a></span>
+                    <span class="post-author"><a href="#">{{ post.author }}</a></span>
+                    <span class="comments-link"><a href="#comment-area">{{ post.comment_set.count }} 评论</a></span>
+                    <span class="views-count"><a>{{ post.views }} 阅读</a></span>
+                </div>
+            </header>
+            <div class="entry-content clearfix">
+                {{ post.body|safe }}
+            </div>
+        </article>
 
-<section class="comment-area" id="comment-area">
-    <div class="comment-list-panel">
-        {% show_comments post %}
-    </div>
-</section>
-{% endif %}
+        <section class="comment-area" id="comment-area">
+            <div class="comment-list-panel">
+                {% show_comments post %}
+            </div>
+        </section>
+    {% endif %}
+    <script>
+    function confirm_safe_delete() {
+        layer.open({
+            title: "确认删除",
+            content: "确认删除这篇文章吗？",
+            yes: function(index, layero) {
+                $('form#safe_delete button').click();
+                layer.close(index);
+            }
+        })
+    }
+</script>
 {% endblock %}
 {% block sidemenu %}
 <aside class="col-md-4">
@@ -63,10 +82,9 @@
     </div>
     {% endif %}
     {% endblock %}
-
-    {% show_authors post.author %}
-    <div class="rss">
-        <a href=""><span class="ion-social-rss-outline"></span>大哥大嫂过年好!</a>
-    </div>
-</aside>
+        {% show_authors post.author %}
+        <div class="rss">
+            <a href="/blog/money"><span class="ion-social-rss-outline"></span>大哥大嫂过年好!</a>
+        </div>
+    </aside>
 {% endblock %}

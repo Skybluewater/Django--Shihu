@@ -52,7 +52,8 @@ class Post(models.Model):
 
     # 摘要逻辑 重写save()方法,保存到数据库之前进行一次过滤
     def save(self, *args, **kwargs):
-        self.modified_time = timezone.now()
+        self.created_time = timezone.now()
+        self.modified_time = self.created_time
         # 如果没填写摘要
         if not self.excerpt:
             # 实例化一个Markdown对象,用于渲染body的文本

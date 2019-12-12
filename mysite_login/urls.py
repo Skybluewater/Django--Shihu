@@ -1,5 +1,4 @@
 """mysite_login URL Configuration
-
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/2.2/topics/http/urls/
 Examples:
@@ -18,6 +17,8 @@ from django.urls import path
 from django.urls import include
 from django.conf.urls import url
 from login import views
+from django.conf.urls.static import static
+from django.conf import settings
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -27,4 +28,8 @@ urlpatterns = [
     path(" captcha/", include("captcha.urls")),
     url(r"blog/", include("blog.urls")),
     url(r"comments/", include("comments.urls")),
+    path('reset_passowrd/', include('reset_passowrd.urls')),
+    path('user_profile/', include('userprofile.urls')),
 ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

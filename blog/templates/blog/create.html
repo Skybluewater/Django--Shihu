@@ -1,7 +1,7 @@
 <!-- extends表明此页面继承自 base.html 文件 -->
 {% extends "base.html" %}
 <!-- 写入 base.html 中定义的 title -->
-{% block title %} 编辑文章 {% endblock title %}
+{% block title %} 创建文章 {% endblock title %}
 <!-- 写入 base.html 中定义的 content -->
 {% block content %}
 <!-- 写文章表单 -->
@@ -10,7 +10,7 @@
         <div class="col-12">
             <br>
             <!-- 提交文章的表单 -->
-            <form method="POST" action="{% url 'blog:edit' article.id %}">
+            <form method="post" action=".">
                 <!-- Django中需要POST数据的地方都必须有csrf_token -->
                 {% csrf_token %}
                 <!-- 文章标题 -->
@@ -18,14 +18,14 @@
                     <!-- 标签 -->
                     <label for="title">文章标题</label>
                     <!-- 文本框 -->
-                    <input type="text" class="form-control" id="title" name="title" value="{{ article.title }}">
+                    <input type="text" class="form-control" id="title" name="title">
                 </div>
                 <div class="form-group">
                     <label for="category">文章分类</label>
                     <select class="form-control col-3" id="category" name="category" required="required">
                             <option value="none">请选择栏目..</option>
                         {% for category in categoty_list %}
-                            <option value="{{ category.id }}" {% if category.id == article.category.id %}selected{% endif %}>{{ category.name }}</option>
+                            <option value="{{ category.id }}">{{ category.name }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -34,14 +34,14 @@
                     <select class="form-control col-3" id="tags" name="tags" multiple="multiple" required="required">
                             <option value="none">请选择栏目..</option>
                         {% for tag in tags_list %}
-                            <option value="{{ tag.id }}" {% if tag.id == article.tag.id %}selected{% endif %}>{{ tag.name }}</option>
+                            <option value="{{ tag.id }}">{{ tag.name }}</option>
                         {% endfor %}
                     </select>
                 </div>
                 <div class="form-group">
                     <label for="body">文章正文</label>
                     <!-- 文本区域 -->
-                    <textarea type="text" class="form-control" id="body" name="body" rows="12">{{ article.body }}</textarea>
+                    <textarea type="text" class="form-control" id="body" name="body" rows="12"></textarea>
                 </div>
                 <!-- 提交按钮 -->
                 <button type="submit" class="btn btn-primary">完成</button>
