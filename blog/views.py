@@ -10,7 +10,6 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from django.core.paginator import Paginator
 from comments.models import Comment
-from django.db.models import Q
 
 
 def detail(request, pk):
@@ -27,16 +26,15 @@ def detail(request, pk):
     m = re.search(r'<div class="toc">\s*<ul>(.*)</ul>\s*</div>', md.toc, re.S)
     post.toc = m.group(1) if m is not None else ''
     answer_list = Answer.objects.filter(post=post).order_by('-views')
-    like_list=Liked.objects.filter(post=post)
     if request.session.get('is_login', None):
         id = request.session['user_id']
         if id == post.author.id:
             k = 'allowed'
             return render(request, "blog/single.html",
-                          context={'post': post, 'delete_allowance': k, 'answer_list': answer_list, 'like_list':like_list})
+                          context={'post': post, 'delete_allowance': k, 'answer_list': answer_list})
     k = 'not_allowed'
     return render(request, "blog/single.html",
-                  context={'post': post, 'delete_allowance': k, 'answer_list': answer_list, 'like_list':like_list})
+                  context={'post': post, 'delete_allowance': k, 'answer_list': answer_list})
 
 
 def archive(request, year, month):
@@ -287,21 +285,3 @@ def answer_detail(request, id):
     return render(request, "blog/answer.html",
                   context={'answer': answer, 'delete_allowance': k, 'pre_article': pre_article,
                            'next_article': next_article, })
-
-
-def  on_like(request, id):
-     user=User.objects.get(username=request.session.get('user_name'))
-     like=Liked.objects.filter(Q(post=id)|Q(user=user))
-     if like!=[]:
-         return HttpResponse("您已经点过赞了！")
-     post=get_object_or_404(Post, id=id)
-     like=Liked(user=user,post=post)
-     post.likecount+=1
-     post.save()
-     like.save()
-     return HttpResponse("点赞成功！")
-
-
-
-
-

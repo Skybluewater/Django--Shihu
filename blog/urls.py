@@ -17,5 +17,4 @@ urlpatterns = [
     path("answer_delete/<int:id>/", views.answer_del, name="answer_delete"),
     path("answer_create/<int:id>", views.answer_post, name="answer_create"),
     path("answer_edit/<int:id>", views.answer_edit, name="answer_edit"),
-    path("post_like/<int:id>", views.on_like, name="like"),
 ]

@@ -16,12 +16,6 @@
                             <span class="post-author"><a href="#">{{ post.author }}</a></span>
                             <span class="views-count"><a>{{ post.views }} 阅读</a></span>
                             <span class="answer-link"><a href="#answer">{{ answer_list.count }} 回答</a></span>
-                            <span class="post_like">{{ post.likecount }} 赞</span>
-                            <span class="like"><a href="{% url 'blog:like' post.id %}">点赞</a></span><br>
-                            <tr>谁点过赞:</tr><br>
-                            {% for  like in like_list %}
-                            <tr><a href="#">{{ like.user }}</a></tr><br>
-                            {% endfor %}
                             {% if delete_allowance == 'allowed' %}
                                 <span class="button"><a href="#" onclick="confirm_safe_delete()">删除问题</a>
                         <form style="display:none;" id="safe_delete" action="{% url 'blog:delete' post.id %}"
