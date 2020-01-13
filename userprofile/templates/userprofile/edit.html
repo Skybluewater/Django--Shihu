@@ -1,0 +1,40 @@
+{% extends "base.html" %} {% load staticfiles %}
+{% block title %} 用户信息 {% endblock title %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-8">
+            <div class="col-8">用户名:{{ user.name }}</div>
+            <br>
+            <br>
+            {% if profile.avatar %}
+                <img src="{{ profile.avatar.url }}" class="col-md-4">
+            {% else %}
+                <h5 class="col-8">暂无头像</h5>
+            {% endif %}
+            <br>
+            <br>
+            <form method="post" action="." enctype="multipart/form-data">
+                {% csrf_token %}
+                <!-- avatar -->
+                <div class="form-group">
+                    <input type="file" class="form-control-file" name="avatar" id="avatar">
+                </div>
+                <!-- phone -->
+                <div class="form-group">
+                    <label for="phone">电话</label>
+                    <input type="text" class="form-control" id="phone" name="phone" value="{{ profile.phone }}">
+                </div>
+                <!-- bio -->
+                <div class="form-group">
+                    <label for="bio">简介</label>
+                    <!-- 文本区域 -->
+                    <textarea type="text" class="form-control" id="bio" name="bio" rows="12">{{ profile.bio }}</textarea>
+                </div>
+                <!-- 提交按钮 -->
+                <button type="submit" class="btn btn-primary">提交</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock content %}

@@ -1,80 +1,106 @@
 {% extends 'base.html' %}
 {% load blog_extra %}
+{% load staticfiles %}
 {% block title %}主页{% endblock %}
 {% block content %}
-    {% if request.session.is_login %}
-        {% for post in post_list %}
-            <article class="post post-{{ post.pk }}">
-                <h1 class="entry-title">
-                    <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
-                </h1>
-                <div class="entry-meta">
-                    <span class="post-category"><a href="#">{{ post.category.name }}</a></span>
-                    <span class="post-date"><a href="#"><time class="entry-date" datetime="{{ post.created_time }}">{{ post.created_time }}</time></a></span>
-                    <span class="post-author"><a href="#">{{ post.author }}</a></span>
-                    <span class="comments-link"><a href="{{ post.get_absolute_url }}#comment-area">{{ post.comment_set.count }} 评论</a></span>
-                    <span class="views-count"><a href="#">{{ post.views }} 阅读</a></span>
-                </div>
-                <div class="entry-content clearfix">
+    {% for post in post_list %}
+        <article class="post post-{{ post.pk }}">
+            <h1 class="entry-title">
+                <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
+            </h1>
+            <div class="entry-meta">
+                <span class="post-category"><a href="#">{{ post.category.name }}</a></span>
+                <span class="post-date"><a href="#"><time class="entry-date"
+                                                          datetime="{{ post.created_time }}">{{ post.created_time }}</time></a></span>
+                <span class="post-author"><a href="#">{{ post.author }}</a></span>
+                <span class="comments-link"><a
+                        href="{{ post.get_absolute_url }}#comment-area">{{ post.comment_set.count }} 评论</a></span>
+                <span class="views-count"><a href="#">{{ post.views }} 阅读</a></span>
+            </div>
+            <div class="entry-content clearfix">
                 <p>{{ post.excerpt }}</p>
-                    <div class="read-more cl-effect-14">
-                        <a href="{{ post.get_absolute_url }}" class="more-link">继续阅读 <span class="meta-nav">→</span></a>
-                    </div>
+                <div class="read-more cl-effect-14">
+                    <a href="{{ post.get_absolute_url }}" class="more-link">继续阅读 <span class="meta-nav">→</span></a>
                 </div>
-             </article>
-        {% empty %}
-            <div class="no-post">暂时还没有发布的文章！</div>
-        {% endfor %}
-    {% else %}
-        {% for post in post_list %}
-            <article class="post post-{{ post.pk }}">
-                <h1 class="entry-title">
-                    <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
-                </h1>
-                <div class="entry-meta">
-                    <span class="post-category"><a href="#">{{ post.category.name }}</a></span>
-                    <span class="post-date"><a href="#"><time class="entry-date" datetime="{{ post.created_time }}">{{ post.created_time }}</time></a></span>
-                    <span class="post-author"><a href="#">{{ post.author }}</a></span>
-                    <span class="comments-link"><a href="{{ post.get_absolute_url }}#comment-area">{{ post.comment_set.count }} 评论</a></span>
-                    <span class="views-count"><a href="#">{{ post.views }} 阅读</a></span>
-                </div>
-                <div class="entry-content clearfix">
-                <p>{{ post.excerpt }}</p>
-                    <div class="read-more cl-effect-14">
-                        <a href="{{ post.get_absolute_url }}" class="more-link">继续阅读 <span class="meta-nav">→</span></a>
-                    </div>
-                </div>
-             </article>
-        {% empty %}
-            <div class="no-post">暂时还没有发布的文章！</div>
-        {% endfor %}
-    {% endif %}
-    {% if is_paginated %}
-        <div class="pagination-simple">
-        <!-- 如果当前页还有上一页，显示一个上一页的按钮 -->
-            {% if page_obj.has_previous %}
-  	            <a href="?page={{ page_obj.previous_page_number }}">上一页</a>
-            {% endif %}
-            <!-- 显示当前页面信息 -->
-            <span class="current">第 {{ page_obj.number }} 页 / 共 {{ paginator.num_pages }} 页</span>
-            <!-- 如果当前页还有下一页，显示一个下一页的按钮 -->
-            {% if page_obj.has_next %}
-  	            <a href="?page={{ page_obj.next_page_number }}">下一页</a>
-            {% endif %}
+            </div>
+        </article>
+    {% empty %}
+        <div class="no-post">暂时还没有发布的文章！</div>
+    {% endfor %}
+    <div class="pagination row">
+        <div class="m-auto">
+            <span class="step-links">
+                <!-- 如果不是第一页，则显示上翻按钮 -->
+                {% if post_list.has_previous %}
+                    <a href="?page=1" class="btn btn-success">
+                    &laquo; 1
+                    </a>
+                    <span>...</span>
+                    <a href="?page={{ post_list.previous_page_number }}"
+                       class="btn btn-secondary"
+                    >
+                        {{ post_list.previous_page_number }}
+                    </a>
+                {% endif %}
+
+                <!-- 当前页面 -->
+                <span class="current btn btn-danger btn-lg">
+                    {{ post_list.number }}
+                </span>
+
+                <!-- 如果不是最末页，则显示下翻按钮 -->
+                {% if post_list.has_next %}
+                    <a href="?page={{ post_list.next_page_number }}"
+                       class="btn btn-secondary"
+                    >
+                        {{ post_list.next_page_number }}
+                    </a>
+                    <span>...</span>
+                    <a href="?page={{ post_list.paginator.num_pages }}"
+                       class="btn btn-success"
+                    >
+                        {{ post_list.paginator.num_pages }} &raquo;
+                    </a>
+                {% endif %}
+            </span>
         </div>
-    {% endif %}
+    </div>
 {% endblock %}
 {% block sidemenu %}
-    <aside class="col-md-4">
-        {% block toc %}
-        {% endblock toc %}
-        {% show_recent_posts %}
-        {% show_ars %}
-        {% show_categories %}
-        {% show_tags %}
-        <div class="rss">
-            <a href="/blog/money/"><span class="ion-social-rss-outline"></span>大哥大嫂过年好!</a>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar_inner">
+            <aside class="col-md-4">
+                {% block toc %}
+                {% endblock toc %}
+                {% show_recent_posts %}
+                {% show_ars %}
+                {% show_categories %}
+                {% show_tags %}
+                <div class="rss">
+                    <a href="/blog/money/"><span class="ion-social-rss-outline"></span>大哥大嫂过年好!</a>
+                </div>
+            </aside>
         </div>
-    </aside>
-{% endblock %}
+    </div>
+    <style>
+        .sidebar {
+            will-change: min-height;
+        }
 
+        .sidebar__inner {
+            transform: translate(0, 0); /* For browsers don't support translate3d. */
+            transform: translate3d(0, 0, 0);
+            will-change: position, transform;
+        }
+    </style>
+{% endblock %}
+{% block script %}
+    <!-- 引入粘性侧边栏 -->
+    <script src="{% static 'sticky_side_bar/jquery.sticky-sidebar.min.js' %}"></script>
+    <script type="text/javascript">
+        $('#sidebar').stickySidebar({
+            topSpacing: 20,
+            bottomSpacing: 20,
+        });
+    </script>
+{% endblock script %}

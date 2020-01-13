@@ -8,6 +8,7 @@ from django.utils import timezone
 from django.contrib import messages
 from .forms import CommentForm
 from login.models import User
+import markdown
 
 @require_POST
 def comment(request, post_pk):
@@ -17,7 +18,18 @@ def comment(request, post_pk):
     post = get_object_or_404(Post, pk=post_pk)
     # django 将用户提交的数据封装在 request.POST 中，这是一个类字典对象。
     # 我们利用这些数据构造了 CommentForm 的实例，这样就生成了一个绑定了用户提交数据的表单。
-    form = CommentForm(request.POST)
+
+    # 先把POST的内容过一遍markdown的渲染器
+    # 这事是不是应该拿js在用户机器上做？
+    md = markdown.Markdown(extensions=[
+        'markdown.extensions.extra',
+        'markdown.extensions.codehilite',
+    ])
+    # https://docs.djangoproject.com/zh-hans/3.0/ref/request-response/#django.http.QueryDict.__setitem__
+    rPOST = request.POST.copy()
+    rPOST.__setitem__("text", md.convert(rPOST.get("text")))
+    form = CommentForm(rPOST)
+
     # 当调用 form.is_valid() 方法时，django 自动帮我们检查表单的数据是否符合格式要求。
     if form.is_valid():
         # commit=False 的作用是仅仅利用表单的数据生成 Comment 模型类的实例，但还不保存评论数据到数据库。

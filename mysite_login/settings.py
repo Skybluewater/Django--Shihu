@@ -15,7 +15,6 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
@@ -26,8 +25,6 @@ SECRET_KEY = 'iqbj!4#v%zn)t(-s8dr#$_3#syqq#_ff&*+xfa0kd44*8(&p#e'
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -41,6 +38,10 @@ INSTALLED_APPS = [
     'captcha',
     'blog',
     'comments',
+    'reset_passowrd',
+    'userprofile',
+    'ckeditor',
+    'mdeditor',
 ]
 
 MIDDLEWARE = [
@@ -125,3 +126,18 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
+
+EMAIL_HOST = 'smtp.qq.com'
+# 改为你自己的邮箱名！
+EMAIL_HOST_USER = '2274296423@qq.com'
+# 你的邮箱密码
+EMAIL_HOST_PASSWORD = 'bfszzgnisdewdice'
+# 发送邮件的端口
+EMAIL_PORT = 25
+# 是否使用 TLS
+EMAIL_USE_TLS = True
+# 默认的发件人
+DEFAULT_FROM_EMAIL = '矢呼 <2274296423@qq.com>'
+CONFIRM_DAYS = 7
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
