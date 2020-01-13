@@ -16,6 +16,7 @@
                             <span class="post-author"><a href="#">{{ post.author }}</a></span>
                             <span class="views-count"><a>{{ post.views }} 阅读</a></span>
                             <span class="answer-link"><a href="#answer">{{ answer_list.count }} 回答</a></span>
+                            <span class="button"> <a onclick="article_focus({{post.id}})" href="#" class="a_post">关注</a></span>
                             <span class="post_like">{{ post.likecount }} 赞</span>
                             <span class="like"><a href="{% url 'blog:like' post.id %}">点赞</a></span><br>
                             <tr>谁点过赞:</tr><br>
@@ -86,6 +87,8 @@
 {% endblock %}
 
 {% block script %}
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+    <script type="text/javascript" src="{% static 'layer/layer.js'%}"></script>
     <script>
         function confirm_safe_delete() {
             layer.open({
@@ -96,6 +99,34 @@
                     layer.close(index);
                 }
             })
+        }
+    </script>
+ <script src="{% static 'csrf.js' %}"></script>
+   <script type="text/javascript">
+        function article_focus(id) {
+            $.ajax({
+                url: '{% url "blog:article_focus" post.id %}',
+                type: "POST",
+                data: {"id": id},
+                success: function (e) {
+                    if (e === "1") {
+                        layer.msg('关注成功', {
+                            btn: ['明白了']
+                        });
+                        window.location.reload();
+                    }
+                    else if (e === "2") {
+                        layer.msg('关注失败', {
+                            btn: ['明白了']
+                        });
+                    }
+                    else if (e === "3") {
+                        layer.msg('您已经关注过了',{
+                           btn: ['明白了']
+                        });
+                    }
+                },
+            });
         }
     </script>
 {% endblock %}

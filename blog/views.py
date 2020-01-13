@@ -51,6 +51,36 @@ def archive(request, year, month):
     return render(request, 'blog/index.html', context)
 
 
+def focus(request):
+    user = User.objects.get(id=request.session.get('user_id', None))
+    articlelist = Post.objects.filter(users_focus=user.id
+                                      ).order_by('-created_time')
+    paginator = Paginator(articlelist, 10)
+    page = request.GET.get('page')
+    post_list = paginator.get_page(page)
+    context = {'post_list': post_list}
+    return render(request, 'blog/focus.html', context)
+
+
+def article_focus(request, id):
+    article = Post.objects.get(id=id)
+    user = User.objects.get(id=request.session.get('user_id', None))
+    focus = article.users_focus.all()
+    i = 0
+    while i < focus.__len__():
+        if focus[i].id == user.id:
+            break
+        else:
+            i = i + 1
+    if i < focus.__len__():
+        return HttpResponse("3")
+    try:
+        article.users_focus.add(user)
+        return HttpResponse("1")
+    except:
+        return HttpResponse("2")
+
+
 def category(request, pk):
     cate = get_object_or_404(Category, pk=pk)
     articlelist = Post.objects.filter(category=cate).order_by('-created_time')

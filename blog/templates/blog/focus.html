@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %} 我的关注 {% endblock title %}
+{% block content %}
+<!-- 写文章表单 -->
+ <ul>
+    {% for post in post_list %}
+      <li>
+        <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
+      </li>
+    {% endfor %}
+  </ul>
+{% endblock content %}
